@@ -9,13 +9,29 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
 #include <stdio.h>
+#include <string.h>
+#include <windows.h>
 
 int main() {
+
+	char ii = 1;
+	ii = '1';
 	
 	// 输出1-100中的奇数
 	for (int i = 1; i <= 100; i += 2) {
 		printf("%d\n", i);
 	}
+
+	char arr[] = "a";  // 字符串结尾有\0结尾
+	char arr0[1] = { 'a' };  //但如果输入的是字符并没有\0
+	printf("%zd\n", sizeof(arr));
+	printf("%zd\n", sizeof(arr[0]));
+	printf("%zd\n", (sizeof(arr) / sizeof(arr[0])));
+	printf("%zd\n", sizeof(arr0));  // 打印 1 - sizeof计算的是变量或变量所占空间大小
+	printf("%s\n", arr0);  // 打印 乱码
+	printf("%zd\n", strlen(arr0));  // 打印 随机值 - 所以strlen计算的是\0前面的元素个数
+	printf("%zd\n", sizeof(arr0[0]));
+
 
 	extern int btanch();
 	btanch();
@@ -40,6 +56,12 @@ int main() {
 
 	extern int binarySearch();
 	binarySearch();
+
+	extern int loop4();
+	loop4();
+
+	extern int loop5();
+	loop5();
 	
 	return 0;
 }
@@ -232,7 +254,7 @@ int factorial() {
 	int sum = 1;
 	int n = 0;
 	printf("输入一个整数");
-	scanf("%d", &n);
+	int judge = scanf("%d", &n);
 
 	for (int i = 1; i <= n; i++) {
 		sum *= i;
@@ -279,13 +301,16 @@ int factorial1() {
 //          如果目标数大于折中数，那么查找的范围在右。代码（left = mid + 1;）
 int binarySearch() {
 	
-	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };  // 没有\0结尾，所以求下标只用-1
 	int k = 7;  // 要查找的数
 
-	int sz = sizeof(arr) / sizeof(arr[0]);  // 数组的个数
+	printf("%zd\n", sizeof(arr));
+	printf("%zd\n", sizeof(arr[0]));
+
+	int sz = sizeof(arr) / sizeof(arr[0]);  // 数组元素的个数
 
 	int left = 0;
-	int right = sz;
+	int right = sz - 1;
 
 	while (left <= right) {
 
@@ -305,6 +330,69 @@ int binarySearch() {
 
 	if (left > right)
 		printf("已查询，无信息");
+
+	return 0;
+}
+
+
+int loop4() {
+
+	char arr1[] = "i am your wallbreaker";  // 字符串，数组最后会有\0
+	char arr2[] = "#####################";  // 所以用strlen计算元素个数比较好
+
+	int left = 0;
+	int right = strlen(arr1) - 1;  // 引用头文件<string.h>
+
+	while (left <= right) {
+
+		arr2[left] = arr1[left];
+		arr2[right] = arr1[right];
+		printf("%s\n", arr2);
+		Sleep(1000);  // 睡眠 - 引用头文件<windows.h>
+		system("cls");  // 清空屏幕
+		left++;
+		right--;
+	}
+
+	printf("%s\n", arr2);
+
+
+	return 0;
+}
+
+
+// 登陆程序
+int loop5() {
+
+	int i = 0;
+	// 假设正确密码是123456
+	char password[20] = { 0 };
+
+	for (i = 0; i < 3; i++) {
+
+		printf("输入密码\n");
+		int judge = scanf("%s", password);
+
+		// strcmp比较的是ASCII码值 - 引用头文件<string.h>
+		// arr1[] = "abcdef";
+		// (输入)"abccccccc"
+		// strcmp(arr1, "abccccccc") > 0;
+		// 先比较第一个字符'a'和'a'，ASCII码值相等，再比较第二个'b'，相等，第三个'c'相等
+		// 第四个，'d'的ASCII码值 > 'c'的ASCII码值
+		// 
+		// if (password == "123456") - err - 两个字符串比较，不能用==，应该用strcmp
+		if (strcmp(password, "123456") == 0) {
+
+			printf("登陆成功\n");
+			break;
+		}
+		else if (i != 2)
+			printf("输入错误，还有%d次机会\n", (2 - i));
+		
+	}
+
+	if (i == 3)
+		printf("三次均错误，退出程序\n");
 
 	return 0;
 }
